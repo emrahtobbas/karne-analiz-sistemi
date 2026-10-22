@@ -3,6 +3,7 @@
 PDF yüklemelerini kabul eder, yayınevini otomatik tanır,
 karne verilerini JSON'a dönüştürür ve isteğe bağlı olarak Supabase'e kaydeder.
 """
+import json
 import os
 import shutil
 import tempfile
@@ -15,6 +16,10 @@ from pydantic import BaseModel
 from karne_core.builder import build
 from karne_core.parsers import detect
 from karne_core.schema import ExamReport, StudentExamFile
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Supabase istemcisi (ortam değişkenleri varsa aktifleşir)
 supabase = None
@@ -66,40 +71,43 @@ def save_to_supabase(rep: ExamReport) -> dict:
             detail="Supabase bağlantısı yapılandırılmamış (SUPABASE_URL veya SUPABASE_KEY eksik)."
         )
 
+    # Tüm Pydantic modellerini güvenli biçimde JSON uyumlu dict yapısına çevir
+    data = json.loads(rep.model_dump_json())
+
     # 1. Sınav kaydı
     exam_payload = {
-        "id": rep.exam.exam_id,
-        "name": rep.exam.name,
-        "type": rep.exam.type,
-        "exam_date": rep.exam.date,
-        "institution_name": rep.exam.institution.name,
-        "city": rep.exam.institution.city,
-        "district": rep.exam.institution.district,
-        "participation": rep.exam.participation.model_dump(),
-        "sections": [s.model_dump() for s in rep.sections],
-        "questions": [q.model_dump() for q in rep.questions],
-        "averages": rep.averages,
-        "average_points": rep.average_points,
-        "source": rep.source.model_dump(),
+        "id": data["exam"]["exam_id"],
+        "name": data["exam"]["name"],
+        "type": data["exam"]["type"],
+        "exam_date": data["exam"].get("date"),
+        "institution_name": data["exam"]["institution"]["name"],
+        "city": data["exam"]["institution"].get("city"),
+        "district": data["exam"]["institution"].get("district"),
+        "participation": data["exam"].get("participation", {}),
+        "sections": data.get("sections", []),
+        "questions": data.get("questions", []),
+        "averages": data.get("averages", {}),
+        "average_points": data.get("average_points", {}),
+        "source": data.get("source", {}),
     }
     supabase.table("exams").upsert(exam_payload).execute()
 
     # 2. Öğrenci kayıtları (batch halinde)
     students_payload = []
-    for s in rep.students:
+    for s in data.get("students", []):
         students_payload.append({
-            "id": f"{rep.exam.exam_id}_{s.student_id}",
-            "exam_id": rep.exam.exam_id,
-            "name": s.name,
-            "class_name": s.class_name,
-            "school_no": s.school_no,
-            "booklet": s.booklet,
-            "score": s.score.model_dump(),
-            "totals": s.totals.model_dump(),
-            "ranks": s.ranks.model_dump(),
-            "subjects": [sub.model_dump() for sub in s.subjects],
-            "answers": [ans.model_dump() for ans in s.answers],
-            "kazanim_report": [k.model_dump() for k in s.kazanim_report],
+            "id": f"{data['exam']['exam_id']}_{s['student_id']}",
+            "exam_id": data["exam"]["exam_id"],
+            "name": s["name"],
+            "class_name": s.get("class_name"),
+            "school_no": s.get("school_no"),
+            "booklet": s.get("booklet"),
+            "score": s.get("score", {}),
+            "totals": s.get("totals", {}),
+            "ranks": s.get("ranks", {}),
+            "subjects": s.get("subjects", []),
+            "answers": s.get("answers", []),
+            "kazanim_report": s.get("kazanim_report", []),
         })
 
     # 50'şerli paketler halinde upsert
@@ -109,7 +117,7 @@ def save_to_supabase(rep: ExamReport) -> dict:
         supabase.table("exam_students").upsert(batch).execute()
 
     return {
-        "exam_id": rep.exam.exam_id,
+        "exam_id": data["exam"]["exam_id"],
         "students_count": len(students_payload),
         "status": "synced"
     }
