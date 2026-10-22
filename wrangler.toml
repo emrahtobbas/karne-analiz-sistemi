@@ -1,0 +1,7 @@
+name = "karne-analiz-portal"
+main = "worker.js"
+compatibility_date = "2024-04-01"
+
+[vars]
+SUPABASE_URL = "https://vuswxiapsonwmnszwldx.supabase.co"
+SUPABASE_KEY = "sb_publishable_HcYxrFjEKe8B7q7PsL6P_A_YD19Ccmn"
