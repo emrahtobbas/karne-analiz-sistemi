@@ -1,0 +1,968 @@
+{
+ "$defs": {
+  "Answer": {
+   "properties": {
+    "qid": {
+     "title": "Qid",
+     "type": "string"
+    },
+    "booklet_no": {
+     "title": "Booklet No",
+     "type": "integer"
+    },
+    "key": {
+     "title": "Key",
+     "type": "string"
+    },
+    "given": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "İşaretlenen şık (büyük harf); boşsa null; '*' = çift/geçersiz işaretleme",
+     "title": "Given"
+    },
+    "status": {
+     "enum": [
+      "correct",
+      "wrong",
+      "blank",
+      "not_taken"
+     ],
+     "title": "Status",
+     "type": "string"
+    }
+   },
+   "required": [
+    "qid",
+    "booklet_no",
+    "key",
+    "status"
+   ],
+   "title": "Answer",
+   "type": "object"
+  },
+  "Check": {
+   "properties": {
+    "name": {
+     "title": "Name",
+     "type": "string"
+    },
+    "ok": {
+     "title": "Ok",
+     "type": "boolean"
+    },
+    "detail": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Detail"
+    }
+   },
+   "required": [
+    "name",
+    "ok"
+   ],
+   "title": "Check",
+   "type": "object"
+  },
+  "Exam": {
+   "properties": {
+    "exam_id": {
+     "title": "Exam Id",
+     "type": "string"
+    },
+    "name": {
+     "title": "Name",
+     "type": "string"
+    },
+    "type": {
+     "description": "TYT, AYT, LGS, ...",
+     "title": "Type",
+     "type": "string"
+    },
+    "date": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Date"
+    },
+    "institution": {
+     "$ref": "#/$defs/Institution"
+    },
+    "participation": {
+     "$ref": "#/$defs/Participation"
+    }
+   },
+   "required": [
+    "exam_id",
+    "name",
+    "type",
+    "institution",
+    "participation"
+   ],
+   "title": "Exam",
+   "type": "object"
+  },
+  "Institution": {
+   "properties": {
+    "name": {
+     "title": "Name",
+     "type": "string"
+    },
+    "city": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "City"
+    },
+    "district": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "District"
+    }
+   },
+   "required": [
+    "name"
+   ],
+   "title": "Institution",
+   "type": "object"
+  },
+  "KazanimRow": {
+   "properties": {
+    "subject": {
+     "title": "Subject",
+     "type": "string"
+    },
+    "kazanim": {
+     "title": "Kazanim",
+     "type": "string"
+    },
+    "questions": {
+     "title": "Questions",
+     "type": "integer"
+    },
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "wrong": {
+     "title": "Wrong",
+     "type": "integer"
+    },
+    "success_pct": {
+     "title": "Success Pct",
+     "type": "number"
+    }
+   },
+   "required": [
+    "subject",
+    "kazanim",
+    "questions",
+    "correct",
+    "wrong",
+    "success_pct"
+   ],
+   "title": "KazanimRow",
+   "type": "object"
+  },
+  "OptionStats": {
+   "properties": {
+    "count": {
+     "title": "Count",
+     "type": "integer"
+    },
+    "pct": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Pct"
+    }
+   },
+   "required": [
+    "count"
+   ],
+   "title": "OptionStats",
+   "type": "object"
+  },
+  "Participation": {
+   "properties": {
+    "kurum": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Kurum"
+    },
+    "ilce": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Ilce"
+    },
+    "il": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Il"
+    },
+    "genel": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Genel"
+    }
+   },
+   "title": "Participation",
+   "type": "object"
+  },
+  "Question": {
+   "properties": {
+    "qid": {
+     "title": "Qid",
+     "type": "string"
+    },
+    "section": {
+     "title": "Section",
+     "type": "string"
+    },
+    "subject": {
+     "title": "Subject",
+     "type": "string"
+    },
+    "order_in_section": {
+     "description": "A kitapçığındaki sıra",
+     "title": "Order In Section",
+     "type": "integer"
+    },
+    "booklet_numbers": {
+     "additionalProperties": {
+      "type": "integer"
+     },
+     "description": "Kitapçık -> soru no, örn. {'A': 1, 'B': 4}",
+     "title": "Booklet Numbers",
+     "type": "object"
+    },
+    "answer_key": {
+     "additionalProperties": {
+      "type": "string"
+     },
+     "description": "Kitapçık -> doğru şık",
+     "title": "Answer Key",
+     "type": "object"
+    },
+    "kazanim": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Kazanim"
+    },
+    "kazanim_code": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Kazanim Code"
+    },
+    "inference": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/QuestionInference"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Yalnızca soru analizi raporu olmayan formatlarda: bilginin nasıl çıkarıldığı"
+    },
+    "institution_stats": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/QuestionStats"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null
+    }
+   },
+   "required": [
+    "qid",
+    "section",
+    "subject",
+    "order_in_section",
+    "booklet_numbers",
+    "answer_key"
+   ],
+   "title": "Question",
+   "type": "object"
+  },
+  "QuestionInference": {
+   "properties": {
+    "kazanim": {
+     "description": "kesin: tüm öğrenci kazanım tablolarıyla tek tutarlı atama; yok: karnede basılmamış",
+     "enum": [
+      "kesin",
+      "belirsiz",
+      "yok"
+     ],
+     "title": "Kazanim",
+     "type": "string"
+    },
+    "kazanim_alternatives": {
+     "items": {
+      "type": "string"
+     },
+     "title": "Kazanim Alternatives",
+     "type": "array"
+    },
+    "booklet_map": {
+     "additionalProperties": {
+      "type": "string"
+     },
+     "description": "Kitapçık -> 'kesin' ya da 'tahmini (fark x)'",
+     "title": "Booklet Map",
+     "type": "object"
+    }
+   },
+   "required": [
+    "kazanim"
+   ],
+   "title": "QuestionInference",
+   "type": "object"
+  },
+  "QuestionStats": {
+   "description": "Kurum geneli soru istatistiği (yayınevi raporundan).",
+   "properties": {
+    "answered_n": {
+     "description": "Bu bölümü çözen öğrenci sayısı",
+     "title": "Answered N",
+     "type": "integer"
+    },
+    "options": {
+     "additionalProperties": {
+      "$ref": "#/$defs/OptionStats"
+     },
+     "title": "Options",
+     "type": "object"
+    },
+    "blank": {
+     "$ref": "#/$defs/OptionStats"
+    },
+    "correct_rate": {
+     "title": "Correct Rate",
+     "type": "number"
+    },
+    "wrong_rate": {
+     "title": "Wrong Rate",
+     "type": "number"
+    },
+    "blank_rate": {
+     "title": "Blank Rate",
+     "type": "number"
+    },
+    "flagged_erroneous": {
+     "default": false,
+     "title": "Flagged Erroneous",
+     "type": "boolean"
+    },
+    "source": {
+     "default": "publisher",
+     "description": "publisher: yayınevi raporundan; computed: öğrenci cevaplarından hesaplandı",
+     "enum": [
+      "publisher",
+      "computed"
+     ],
+     "title": "Source",
+     "type": "string"
+    }
+   },
+   "required": [
+    "answered_n",
+    "options",
+    "blank",
+    "correct_rate",
+    "wrong_rate",
+    "blank_rate"
+   ],
+   "title": "QuestionStats",
+   "type": "object"
+  },
+  "Ranks": {
+   "properties": {
+    "sube": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Sube"
+    },
+    "kurum": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Kurum"
+    },
+    "ilce": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Ilce"
+    },
+    "il": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Il"
+    },
+    "genel": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Genel"
+    }
+   },
+   "title": "Ranks",
+   "type": "object"
+  },
+  "Score": {
+   "properties": {
+    "type": {
+     "title": "Type",
+     "type": "string"
+    },
+    "points": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Points"
+    },
+    "percentile": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Karnede yazan yüzdelik (%)",
+     "title": "Percentile"
+    }
+   },
+   "required": [
+    "type"
+   ],
+   "title": "Score",
+   "type": "object"
+  },
+  "SectionDef": {
+   "properties": {
+    "code": {
+     "description": "örn. TYT_TURKCE, TYT_SOSYAL",
+     "title": "Code",
+     "type": "string"
+    },
+    "name": {
+     "title": "Name",
+     "type": "string"
+    },
+    "question_count": {
+     "title": "Question Count",
+     "type": "integer"
+    },
+    "subjects": {
+     "items": {
+      "$ref": "#/$defs/SubjectDef"
+     },
+     "title": "Subjects",
+     "type": "array"
+    }
+   },
+   "required": [
+    "code",
+    "name",
+    "question_count",
+    "subjects"
+   ],
+   "title": "SectionDef",
+   "type": "object"
+  },
+  "Source": {
+   "properties": {
+    "publisher": {
+     "title": "Publisher",
+     "type": "string"
+    },
+    "parser": {
+     "title": "Parser",
+     "type": "string"
+    },
+    "parser_version": {
+     "title": "Parser Version",
+     "type": "string"
+    },
+    "file_name": {
+     "title": "File Name",
+     "type": "string"
+    },
+    "file_sha256": {
+     "title": "File Sha256",
+     "type": "string"
+    },
+    "page_count": {
+     "title": "Page Count",
+     "type": "integer"
+    },
+    "extraction": {
+     "enum": [
+      "text_layer",
+      "vision",
+      "manual"
+     ],
+     "title": "Extraction",
+     "type": "string"
+    }
+   },
+   "required": [
+    "publisher",
+    "parser",
+    "parser_version",
+    "file_name",
+    "file_sha256",
+    "page_count",
+    "extraction"
+   ],
+   "title": "Source",
+   "type": "object"
+  },
+  "Student": {
+   "properties": {
+    "student_id": {
+     "title": "Student Id",
+     "type": "string"
+    },
+    "name": {
+     "title": "Name",
+     "type": "string"
+    },
+    "class_name": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Class Name"
+    },
+    "school_no": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "School No"
+    },
+    "booklet": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Booklet"
+    },
+    "score": {
+     "$ref": "#/$defs/Score"
+    },
+    "totals": {
+     "$ref": "#/$defs/Totals"
+    },
+    "ranks": {
+     "$ref": "#/$defs/Ranks"
+    },
+    "subjects": {
+     "items": {
+      "$ref": "#/$defs/SubjectResult"
+     },
+     "title": "Subjects",
+     "type": "array"
+    },
+    "answers": {
+     "items": {
+      "$ref": "#/$defs/Answer"
+     },
+     "title": "Answers",
+     "type": "array"
+    },
+    "kazanim_report": {
+     "description": "Karnede basılı kazanım tablosu (ham)",
+     "items": {
+      "$ref": "#/$defs/KazanimRow"
+     },
+     "title": "Kazanim Report",
+     "type": "array"
+    },
+    "source_page": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Source Page"
+    },
+    "checks": {
+     "items": {
+      "$ref": "#/$defs/Check"
+     },
+     "title": "Checks",
+     "type": "array"
+    }
+   },
+   "required": [
+    "student_id",
+    "name",
+    "score",
+    "totals",
+    "ranks",
+    "subjects",
+    "answers"
+   ],
+   "title": "Student",
+   "type": "object"
+  },
+  "SubjectAverage": {
+   "properties": {
+    "correct": {
+     "title": "Correct",
+     "type": "number"
+    },
+    "wrong": {
+     "title": "Wrong",
+     "type": "number"
+    },
+    "net": {
+     "title": "Net",
+     "type": "number"
+    }
+   },
+   "required": [
+    "correct",
+    "wrong",
+    "net"
+   ],
+   "title": "SubjectAverage",
+   "type": "object"
+  },
+  "SubjectDef": {
+   "properties": {
+    "code": {
+     "description": "Ortak ders kodu, örn. MATEMATIK, FELSEFE_SECMELI",
+     "title": "Code",
+     "type": "string"
+    },
+    "name": {
+     "description": "Karnede yazan ad",
+     "title": "Name",
+     "type": "string"
+    },
+    "question_count": {
+     "title": "Question Count",
+     "type": "integer"
+    },
+    "optional_group": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "description": "Seçmeli dersler aynı grup adını taşır (öğrenci birini çözer)",
+     "title": "Optional Group"
+    }
+   },
+   "required": [
+    "code",
+    "name",
+    "question_count"
+   ],
+   "title": "SubjectDef",
+   "type": "object"
+  },
+  "SubjectResult": {
+   "properties": {
+    "section": {
+     "title": "Section",
+     "type": "string"
+    },
+    "subject": {
+     "title": "Subject",
+     "type": "string"
+    },
+    "questions": {
+     "title": "Questions",
+     "type": "integer"
+    },
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "wrong": {
+     "title": "Wrong",
+     "type": "integer"
+    },
+    "blank": {
+     "title": "Blank",
+     "type": "integer"
+    },
+    "net": {
+     "title": "Net",
+     "type": "number"
+    },
+    "success_pct": {
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "default": null,
+     "title": "Success Pct"
+    },
+    "taken": {
+     "default": true,
+     "title": "Taken",
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "section",
+    "subject",
+    "questions",
+    "correct",
+    "wrong",
+    "blank",
+    "net"
+   ],
+   "title": "SubjectResult",
+   "type": "object"
+  },
+  "Totals": {
+   "properties": {
+    "questions": {
+     "title": "Questions",
+     "type": "integer"
+    },
+    "correct": {
+     "title": "Correct",
+     "type": "integer"
+    },
+    "wrong": {
+     "title": "Wrong",
+     "type": "integer"
+    },
+    "blank": {
+     "title": "Blank",
+     "type": "integer"
+    },
+    "net": {
+     "title": "Net",
+     "type": "number"
+    }
+   },
+   "required": [
+    "questions",
+    "correct",
+    "wrong",
+    "blank",
+    "net"
+   ],
+   "title": "Totals",
+   "type": "object"
+  }
+ },
+ "description": "Öğrenci başına tek dosya: sınav bağlamı + öğrencinin sonucu (API'nin döndüreceği birim).",
+ "properties": {
+  "schema_version": {
+   "default": "1.0",
+   "title": "Schema Version",
+   "type": "string"
+  },
+  "source": {
+   "$ref": "#/$defs/Source"
+  },
+  "exam": {
+   "$ref": "#/$defs/Exam"
+  },
+  "sections": {
+   "items": {
+    "$ref": "#/$defs/SectionDef"
+   },
+   "title": "Sections",
+   "type": "array"
+  },
+  "questions": {
+   "items": {
+    "$ref": "#/$defs/Question"
+   },
+   "title": "Questions",
+   "type": "array"
+  },
+  "averages": {
+   "additionalProperties": {
+    "additionalProperties": {
+     "$ref": "#/$defs/SubjectAverage"
+    },
+    "type": "object"
+   },
+   "title": "Averages",
+   "type": "object"
+  },
+  "average_points": {
+   "additionalProperties": {
+    "type": "number"
+   },
+   "title": "Average Points",
+   "type": "object"
+  },
+  "student": {
+   "$ref": "#/$defs/Student"
+  }
+ },
+ "required": [
+  "source",
+  "exam",
+  "sections",
+  "questions",
+  "student"
+ ],
+ "title": "StudentExamFile",
+ "type": "object"
+}
